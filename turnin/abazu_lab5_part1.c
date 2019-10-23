@@ -26,7 +26,7 @@ int main(void) {
 
     /* Insert your solution below */
     while (1) {
-        tmpA = PINA;
+        tmpA = ~PINA;
 
         if (tmpA == 0x00) { tmpC = 0x40; }
 

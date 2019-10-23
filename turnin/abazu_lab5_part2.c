@@ -36,8 +36,8 @@ int main(void) {
 int counter(int state) {
     static unsigned char tmpC;
 
-    unsigned char A0 = PINA & 0x01;
-    unsigned char A1 = PINA & 0x02;
+    unsigned char A0 = ~PINA & 0x01;
+    unsigned char A1 = ~PINA & 0x02;
 
     switch (state) {        //TRANSITIONS
         case init:

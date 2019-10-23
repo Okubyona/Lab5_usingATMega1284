@@ -21,7 +21,7 @@ int festiveLights(int);
 
 int main(void) {
     DDRA = 0x00; PORTA = 0xFF;
-    DDRB = 0xFF; PORTB = 0x00;
+    DDRC = 0xFF; PORTC = 0x00;
 
     States state = init;
 
@@ -52,14 +52,14 @@ int main(void) {
 */
 
 int festiveLights(int state) {
-    static unsigned char tmpB;      //variable to output
+    static unsigned char tmpC;      //variable to output
     static unsigned char cnt;       //keeps track of bits to shift by
     static unsigned char shiftCnt;  //tracks when both sides have been output
                                     //to increment cnt
 
     static unsigned char upDown;    //determines which side is being output
 
-    unsigned char A0 = PINA & 0x01; //grabs input from PORTA
+    unsigned char A0 = ~PINA & 0x01; //grabs input from PORTA
 
     switch (state) {
         case init:
@@ -67,7 +67,7 @@ int festiveLights(int state) {
             cnt = 0x00;
             upDown = 0x00;
             shiftCnt = 0x00;
-            tmpB = 0x00;
+            tmpC = 0x00;
             break;
 
         case wait:
@@ -91,7 +91,7 @@ int festiveLights(int state) {
         case init: break;
 
         case wait:
-            if (tmpB == 0x00) {
+            if (tmpC == 0x00) {
                 cnt = 0x00;
                 shiftCnt = 0x00;
                 upDown = 0x00;
@@ -105,11 +105,11 @@ int festiveLights(int state) {
             }
 
             if (upDown) {           //prints upper lights
-                tmpB = 0x28 >> cnt;
+                tmpC = 0x28 >> cnt;
 
             }
             else {                  //prints lower lights
-                tmpB = 0x05 << cnt;
+                tmpC = 0x05 << cnt;
             }
 
             if (upDown == 0x00) { upDown = 0x01; }  //flip flops upDown
@@ -118,14 +118,14 @@ int festiveLights(int state) {
             ++shiftCnt;
 
             //prevents output from reaching PB6 & PB7
-            if (tmpB > 0x0F) { tmpB = tmpB & 0x3F; }
+            if (tmpC > 0x0F) { tmpC = tmpC & 0x3F; }
 
 
             break;
 
         case waitPA0: break;
     }
-    PORTB = tmpB;
+    PORTC = tmpC;
 
     return state;
 }

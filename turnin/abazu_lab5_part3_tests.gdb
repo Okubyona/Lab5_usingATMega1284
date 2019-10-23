@@ -40,117 +40,117 @@ echo Running all tests..."\n\n
 
 # Add tests below
 
-#Test sequence from init: 0x00, 0x00, 0x01 => PORTB: 0x05
+#Test sequence from init: 0x00, 0x00, 0x01 => PORTC: 0x05
 test "PINA: 0x00, 0x00, 0x01\n"
 set state = init
 setPINA 0x00
 continue 2
-printPORTB
+printPORTC
 setPINA 0x00
 continue 2
-printPORTB
+printPORTC
 setPINA 0x01
 continue 2
-printPORTB
-expectPORTB 0x05
+printPORTC
+expectPORTC 0x05
 expect state waitPA0
 checkResult
 
-#Test sequence from init: 0x00, 0x01, 0x01, 0x01 => PORTB: 0x05
+#Test sequence from init: 0x00, 0x01, 0x01, 0x01 => PORTC: 0x05
 test "PINA: 0x00, 0x01, 0x01, 0x01\n"
     set state = init
     setPINA 0x00
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
-    expectPORTB 0x05
+    printPORTC
+    expectPORTC 0x05
     expect state waitPA0
 checkResult
 
-#Test sequence from init: 0x00, 0x01, 0x00, 0x01 => PORTB 0x28
+#Test sequence from init: 0x00, 0x01, 0x00, 0x01 => PORTC 0x28
 test "PINA: 0x00, 0x01, 0x00, 0x01, 0x00\n"
     set state = init
     setPINA 0x00
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x00
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x00
     continue 2
-    printPORTB
-    expectPORTB 0x28
+    printPORTC
+    expectPORTC 0x28
     expect state wait
 checkResult
 
-#Test sequence from init: 0x00, 0x01, 0x00, 0x01, 0x00, 0x01 => PORTB 0x28
+#Test sequence from init: 0x00, 0x01, 0x00, 0x01, 0x00, 0x01 => PORTC 0x28
 test "PINA: 0x00, 0x01, 0x00, 0x01, 0x00, 0x01\n"
     set state = init
     setPINA 0x00
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x00
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x00
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
-    expectPORTB 0xa
+    printPORTC
+    expectPORTC 0xa
     expect state waitPA0
 checkResult
 
-#Test sequence from init: full cycle => PORTB 0x28
+#Test sequence from init: full cycle => PORTC 0x28
 test "PINA: full cycle\n"
     set state = init
     setPINA 0x00
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     set festiveLights::cnt = 5
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x00
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x00
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x00
     continue 2
-    printPORTB
+    printPORTC
     setPINA 0x01
     continue 2
-    printPORTB
-    expectPORTB 0x05
+    printPORTC
+    expectPORTC 0x05
     expect state waitPA0
 checkResult
 
