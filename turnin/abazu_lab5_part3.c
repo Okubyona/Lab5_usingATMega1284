@@ -9,13 +9,15 @@
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
+ *  Demo Link:
+ *  https://drive.google.com/file/d/1W5rNSrHgQm5Sk-TQoCwRo1gJjD4I6N8J/view?usp=sharing
  */
 #include <avr/io.h>
 #ifdef _SIMULATE_
 #include "simAVRHeader.h"
 #endif
 
-typedef enum States {init, wait, festive, waitPA0 } States;
+typedef enum States {init, wait, waitPA0, festive } States;
 
 int festiveLights(int);
 
@@ -74,12 +76,12 @@ int festiveLights(int state) {
             state = A0 ? festive: wait;
             break;
 
-        case festive:
-            state = waitPA0;
-            break;
-
         case waitPA0:
             state = A0 ? waitPA0: wait;
+            break;
+
+        case festive:
+            state = waitPA0;
             break;
 
         default:
