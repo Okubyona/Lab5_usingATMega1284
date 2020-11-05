@@ -9,6 +9,9 @@
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
+ *  Demo Link:
+ *  https://drive.google.com/file/d/1VQsMZyiADj8j5En4XNau8AuLcpNGOBtH/view?usp=sharing
+ *  Accidentially left sound on in this one
  */
 #include <avr/io.h>
 #ifdef _SIMULATE_
@@ -82,7 +85,6 @@ int counter(int state) {
 
         default:
             state = init;
-            tmpC = 0x07;
             break;
     }
 
@@ -92,7 +94,7 @@ int counter(int state) {
         case waitA: break;
 
         case increment:
-            if (tmpC < 7) { ++tmpC; }
+            if (tmpC < 9) { ++tmpC; }
             break;
 
         case waitInc: break;
