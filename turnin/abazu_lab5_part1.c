@@ -31,17 +31,17 @@ int main(void) {
     while (1) {
         tmpA = ~PINA;
 
-        if (tmpA == 0x00) { tmpC = 0x40; }
+        if ((tmpA & 0x3F) == 0x00) { tmpC = 0x40; }
 
-        else if (tmpA <= 0x02) { tmpC = 0x60; }
+        else if ((tmpA & 0x3F) <= 0x02) { tmpC = 0x60; }
 
-        else if (tmpA <= 0x04) { tmpC = 0x70; }
+        else if ((tmpA & 0x3F) <= 0x04) { tmpC = 0x70; }
 
-        else if (tmpA <= 0x06) { tmpC = 0x38; }
+        else if ((tmpA & 0x3F) <= 0x06) { tmpC = 0x38; }
 
-        else if (tmpA <= 0x09) { tmpC = 0x3C; }
+        else if ((tmpA & 0x3F) <= 0x09) { tmpC = 0x3C; }
 
-        else if (tmpA <= 0x0C) { tmpC = 0x03E; }
+        else if ((tmpA & 0x3F) <= 0x0C) { tmpC = 0x03E; }
 
         else { tmpC = 0x3F; }
 

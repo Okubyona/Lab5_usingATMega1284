@@ -1,131 +1,52 @@
-/*	Author: papercrane
+/*	Author: Andrew Bazua [abazu001]
  *  Partner(s) Name:
  *	Lab Section:
- *	Assignment: Lab #5  Exercise #3
- *	Exercise Description: [Create your own festive lights display with 6 LEDs
-        connected to port PB5..PB0, lighting in some attractive sequence.
-        Pressing the button on PA0 changes the lights to the next configuration
-        in the sequence.  Use a state machine (not synchronous) captured in C. ]
+ *	Assignment: Lab #05  Exercise #1
+ *	Exercise Description: [ car has a fuel-level sensor that sets PA3..PA0 to a value between 0 (empty)
+        and 15 (full). A series of LEDs connected to PC5..PC0 should light to graphically indicate the
+        fuel level. If the fuel level is 1 or 2, PC5 lights. If the level is 3 or 4, PC5 and PC4 light.
+        Level 5-6 lights PC5..PC3. 7-9 lights PC5..PC2. 10-12 lights PC5..PC1. 13-15 lights PC5..PC0.
+        Also, PC6 connects to a "Low fuel" icon, which should light if the level is 4 or less. ]
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
+ *  Demo Link:
+ *  https://drive.google.com/file/d/1Q1zxgVYX7jrb_YHWA12pDViGBiZHUmGP/view?usp=sharing
+ *  NOTE: link can only be accessed using rmail, it is set to only R'mail group can view
  */
 #include <avr/io.h>
 #ifdef _SIMULATE_
 #include "simAVRHeader.h"
 #endif
 
-typedef enum States {init, wait, waitPA0, festive } States;
-
-int festiveLights(int);
-
 int main(void) {
-    DDRA = 0x00; PORTA = 0xFF;
-    DDRC = 0xFF; PORTC = 0x00;
+    /* Insert DDR and PORT initializations */
+    DDRA = 0x00; PORTA = 0xFF;  // Sets PORTA as input PINA
+    DDRC = 0xFF; PORTC = 0x00;  // Sets PORTC as output
 
-    States state = init;
+    unsigned char tmpA = 0x00;
+    unsigned char tmpC = 0x00;
 
+    /* Insert your solution below */
     while (1) {
-        state = festiveLights(state);
+        tmpA = ~PINA & 0x3F;
+
+        if (tmpA == 0x00) { tmpC = 0x40; }
+
+        else if (tmpA <= 0x02) { tmpC = 0x60; }
+
+        else if (tmpA <= 0x04) { tmpC = 0x70; }
+
+        else if (tmpA <= 0x06) { tmpC = 0x38; }
+
+        else if (tmpA <= 0x09) { tmpC = 0x3C; }
+
+        else if (tmpA <= 0x0C) { tmpC = 0x03E; }
+
+        else { tmpC = 0x3F; }
+
+        PORTC = tmpC;
 
     }
-
     return 1;
-}
-
-/*
-    Light Pattern:
-        will alternate between
-        00| 00 0101     //these bits shifting to the left
-        00| 10 1000     //and these to the right
-
-        00| 00 1010
-        00| 01 0100
-
-        00| 01 0100
-        00| 00 1010
-
-        and so on
-
-        when output reaches 0x00 all variables reset
-
-*/
-
-int festiveLights(int state) {
-    static unsigned char tmpC;      //variable to output
-    static unsigned char cnt;       //keeps track of bits to shift by
-    static unsigned char shiftCnt;  //tracks when both sides have been output
-                                    //to increment cnt
-
-    static unsigned char upDown;    //determines which side is being output
-
-    unsigned char A0 = ~PINA & 0x01; //grabs input from PORTA
-
-    switch (state) {
-        case init:
-            state = wait;
-            cnt = 0x00;
-            upDown = 0x00;
-            shiftCnt = 0x00;
-            tmpC = 0x00;
-            break;
-
-        case wait:
-            state = A0 ? festive: wait;
-            break;
-
-        case waitPA0:
-            state = A0 ? waitPA0: wait;
-            break;
-
-        case festive:
-            state = waitPA0;
-            break;
-
-        default:
-            state = init;
-            break;
-    }
-
-    switch (state) {
-        case init: break;
-
-        case wait:
-            if (tmpC == 0x00) {
-                cnt = 0x00;
-                shiftCnt = 0x00;
-                upDown = 0x00;
-            }
-            break;
-
-        case festive:
-            if (shiftCnt == 0x02) {
-                ++cnt;          //both sides have been output, increase shift
-                shiftCnt = 0x00;
-            }
-
-            if (upDown) {           //prints upper lights
-                tmpC = 0x28 >> cnt;
-
-            }
-            else {                  //prints lower lights
-                tmpC = 0x05 << cnt;
-            }
-
-            if (upDown == 0x00) { upDown = 0x01; }  //flip flops upDown
-            else { upDown = 0x00; }
-
-            ++shiftCnt;
-
-            //prevents output from reaching PB6 & PB7
-            if (tmpC > 0x0F) { tmpC = tmpC & 0x3F; }
-
-
-            break;
-
-        case waitPA0: break;
-    }
-    PORTC = tmpC;
-
-    return state;
 }

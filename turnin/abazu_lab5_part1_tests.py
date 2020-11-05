@@ -31,6 +31,10 @@ tests = [
         'steps': [ {'inputs': [('PINA',0x0F), ('PINB', 0xFF)], 'iterations': 1 } ],
         'expected': [('PORTC',0x3F)],
     },
+    {'description': 'Test values over 0x3F',
+        'steps': [ {'inputs': [('PINA',0xCF), ('PINB', 0xFF)], 'iterations': 1 } ],
+        'expected': [('PORTC',0x3F)],
+    },
     ]
 
 # Optionally you can add a set of "watch" variables these need to be global or static and may need
