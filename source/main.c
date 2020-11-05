@@ -1,11 +1,11 @@
-/*	Author: papercrane
+/*	Author: Andrew Bazua
  *  Partner(s) Name:
- *	Lab Section:
- *	Assignment: Lab #5  Exercise #3
- *	Exercise Description: [Create your own festive lights display with 6 LEDs
-        connected to port PB5..PB0, lighting in some attractive sequence.
-        Pressing the button on PA0 changes the lights to the next configuration
-        in the sequence.  Use a state machine (not synchronous) captured in C. ]
+ *	Lab Section:023
+ *	Assignment: Lab #5  Exercise #2
+ *	Exercise Description: [Buttons are connected to PA0 and PA1. Output for PORTC
+        is initially 7. Pressing PA0 increments PORTC once (stopping at 9).
+        Pressing PA1 decrements PORTC once (stopping at 0). If both buttons are
+        depressed (even if not initially simultaneously), PORTC resets to 0.]
  *
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
@@ -15,117 +15,99 @@
 #include "simAVRHeader.h"
 #endif
 
-typedef enum States {init, wait, festive, waitPA0 } States;
+typedef enum States {init, waitA, waitInc, waitDec, increment, decrement, reset} States;
 
-int festiveLights(int);
+int counter(int);
 
 int main(void) {
+    /* Insert DDR and PORT initializations */
     DDRA = 0x00; PORTA = 0xFF;
     DDRC = 0xFF; PORTC = 0x00;
 
     States state = init;
 
+    /* Insert your solution below */
     while (1) {
-        state = festiveLights(state);
-
+        state = counter(state);
     }
-
     return 1;
 }
 
-/*
-    Light Pattern:
-        will alternate between
-        00| 00 0101     //these bits shifting to the left
-        00| 10 1000     //and these to the right
+int counter(int state) {
+    static unsigned char tmpC;
 
-        00| 00 1010
-        00| 01 0100
+    unsigned char A0 = ~PINA & 0x01;
+    unsigned char A1 = ~PINA & 0x02;
 
-        00| 01 0100
-        00| 00 1010
-
-        and so on
-
-        when output reaches 0x00 all variables reset
-
-*/
-
-int festiveLights(int state) {
-    static unsigned char tmpC;      //variable to output
-    static unsigned char cnt;       //keeps track of bits to shift by
-    static unsigned char shiftCnt;  //tracks when both sides have been output
-                                    //to increment cnt
-
-    static unsigned char upDown;    //determines which side is being output
-
-    unsigned char A0 = ~PINA & 0x01; //grabs input from PORTA
-
-    switch (state) {
+    switch (state) {        //TRANSITIONS
         case init:
-            state = wait;
-            cnt = 0x00;
-            upDown = 0x00;
-            shiftCnt = 0x00;
-            tmpC = 0x00;
+            state = waitA;
+            tmpC = 0x07;
             break;
 
-        case wait:
-            state = A0 ? festive: wait;
+        case waitA:
+            if (A0 && !A1){ state = increment; }
+            else if (!A0 && A1) { state = decrement; }
+            else if (A0 && A1) { state = reset; }
+            else { state = waitA; }
             break;
 
-        case festive:
-            state = waitPA0;
+        case increment:
+            if (A0 && !A1) { state = waitInc; }
+            else if (A0 && A1) { state = reset; }
+            else if (!A0 && !A1) { state = waitA; }
             break;
 
-        case waitPA0:
-            state = A0 ? waitPA0: wait;
+        case waitInc:
+            if (!A0 && !A1) { state = waitA; }
+            else if (A0 && !A1) { state = waitInc; }
+            else if (A0 && A1) { state = reset; }
+            break;
+
+        case decrement:
+            if (!A0 && A1) { state = waitDec; }
+            else if (A0 && A1) { state = reset; }
+            else if (!A0 && !A1) { state = waitA; }
+            break;
+
+        case waitDec:
+            if (!A0 && !A1) { state = waitA; }
+            else if (A0 && A1) { state = reset; }
+            else if (!A0 && A1) { state = waitDec; }
+            break;
+
+        case reset:
+            state = (A0 && A1)? reset: waitA;
             break;
 
         default:
             state = init;
+            tmpC = 0x07;
             break;
     }
 
-    switch (state) {
+    switch (state) {        //ACTIONS
         case init: break;
 
-        case wait:
-            if (tmpC == 0x00) {
-                cnt = 0x00;
-                shiftCnt = 0x00;
-                upDown = 0x00;
-            }
+        case waitA: break;
+
+        case increment:
+            if (tmpC < 7) { ++tmpC; }
             break;
 
-        case festive:
-            if (shiftCnt == 0x02) {
-                ++cnt;          //both sides have been output, increase shift
-                shiftCnt = 0x00;
-            }
+        case waitInc: break;
 
-            if (upDown) {           //prints upper lights
-                tmpC = 0x28 >> cnt;
-
-            }
-            else {                  //prints lower lights
-                tmpC = 0x05 << cnt;
-            }
-
-            if (upDown == 0x00) { upDown = 0x01; }  //flip flops upDown
-            else { upDown = 0x00; }
-
-            ++shiftCnt;
-
-            //prevents output from reaching PB6 & PB7
-            if (tmpC > 0x0F) { tmpC = tmpC & 0x3F; }
-
-
+        case decrement:
+            if (tmpC > 0) { --tmpC; }
             break;
 
-        case waitPA0: break;
+        case waitDec: break;
+
+        case reset:
+            tmpC = 0x00;
+            break;
     }
-    PORTC = tmpC;
 
+    PORTC = tmpC;
     return state;
 }
