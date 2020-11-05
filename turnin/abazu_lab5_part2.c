@@ -1,4 +1,4 @@
-/*	Author: Andrew Bazua
+/*	Author: Andrew Bazua [abazu001]
  *  Partner(s) Name:
  *	Lab Section:023
  *	Assignment: Lab #5  Exercise #2

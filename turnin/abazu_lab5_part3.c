@@ -1,4 +1,4 @@
-/*	Author: papercrane
+/*	Author: Andrew Bazua [abazu001]
  *  Partner(s) Name:
  *	Lab Section:
  *	Assignment: Lab #5  Exercise #3
