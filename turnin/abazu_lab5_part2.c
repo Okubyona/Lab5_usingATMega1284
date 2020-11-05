@@ -10,8 +10,7 @@
  *	I acknowledge all content contained herein, excluding template or example
  *	code, is my own original work.
  *  Demo Link:
- *  https://drive.google.com/file/d/1VQsMZyiADj8j5En4XNau8AuLcpNGOBtH/view?usp=sharing
- *  Accidentially left sound on in this one
+ *  https://drive.google.com/file/d/1YuLg-S0oTm06qWBm4PXVG02uvyM10poC/view?usp=sharing
  */
 #include <avr/io.h>
 #ifdef _SIMULATE_
@@ -80,7 +79,7 @@ int counter(int state) {
             break;
 
         case reset:
-            state = (A0 && A1)? reset: waitA;
+            state = (A0 || A1)? reset: waitA;
             break;
 
         default:

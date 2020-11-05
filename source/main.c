@@ -80,7 +80,7 @@ int counter(int state) {
             break;
 
         case reset:
-            state = (A0 && A1)? reset: waitA;
+            state = (A0 || A1)? reset: waitA;
             break;
 
         default:
